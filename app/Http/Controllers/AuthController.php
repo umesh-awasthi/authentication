@@ -36,10 +36,10 @@ class AuthController extends Controller
     public function apiLogin(Request $request)
     {
         try {
-            Log::debug('Login request received', [
-                'ip' => $request->ip(),
-                'user_agent' => $request->userAgent()
-            ]);
+            // Log::debug('Login request received', [
+            //     'ip' => $request->ip(),
+            //     'user_agent' => $request->userAgent()
+            // ]);
             
             $validator = Validator::make($request->all(), [
                 'email' => ['required', 'email'],
@@ -47,10 +47,10 @@ class AuthController extends Controller
             ]);
 
             if ($validator->fails()) {
-                Log::error('Login validation failed', [
-                    'errors' => $validator->errors(),
-                    'input' => $request->except('password')
-                ]);
+                // Log::error('Login validation failed', [
+                //     'errors' => $validator->errors(),
+                //     'input' => $request->except('password')
+                // ]);
                 return response()->json([
                     'message' => 'Validation error',
                     'errors' => $validator->errors()
@@ -58,18 +58,18 @@ class AuthController extends Controller
             }
 
             $credentials = $request->only('email', 'password');
-            Log::debug('Attempting login with credentials', [
-                'email' => $credentials['email'],
-                'ip' => $request->ip()
-            ]);
+            // Log::debug('Attempting login with credentials', [
+            //     'email' => $credentials['email'],
+            //     'ip' => $request->ip()
+            // ]);
 
             $customer = Customer::where('email', $credentials['email'])->first();
             
             if ($customer && Hash::check($credentials['password'], $customer->password)) {
-                Log::info('Login successful', [
-                    'email' => $credentials['email'],
-                    'ip' => $request->ip()
-                ]);
+                // Log::info('Login successful', [
+                //     'email' => $credentials['email'],
+                //     'ip' => $request->ip()
+                // ]);
                 
                 $token = $customer->createToken('authToken')->plainTextToken;
 
@@ -80,20 +80,20 @@ class AuthController extends Controller
                 ]);
             }
 
-            Log::warning('Invalid login attempt', [
-                'email' => $credentials['email'],
-                'ip' => $request->ip()
-            ]);
+            // Log::warning('Invalid login attempt', [
+            //     'email' => $credentials['email'],
+            //     'ip' => $request->ip()
+            // ]);
             return response()->json([
                 'message' => 'Invalid credentials',
                 'error' => 'Authentication failed'
             ], 401);
         } catch (\Exception $e) {
-            Log::error('Login error', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'ip' => $request->ip()
-            ]);
+            // Log::error('Login error', [
+            //     'error' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString(),
+            //     'ip' => $request->ip()
+            // ]);
             return response()->json([
                 'message' => 'Internal server error',
                 'error' => $e->getMessage()
